@@ -1,2 +1,4 @@
 # Snakess-Fangame-
-Snake...
+Snake... It's all.
+
+Built with SFML library.
