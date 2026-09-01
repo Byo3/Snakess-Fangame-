@@ -1,8 +1,6 @@
 #include "snake.h"
 #include <SFML/Graphics.hpp>
 // #include <random>
-// #include <vector>
-// #include <cmath>
 
 int main()
 {
@@ -12,6 +10,7 @@ int main()
 
     // Radius, speed, initial position, fps
     Snake snake(25.f, 100.f, {100,400}, 24.f);
+    Apple apple(25.f, {400, 400});
 
     window.setFramerateLimit(60);
 
@@ -23,6 +22,9 @@ int main()
 
         }
         window.clear();
+
+        apple.draw(window);
+        apple.spawning_Apples(width, height);
 
         snake.draw(window);
         snake.movingSnake(snake.detectColision(width, height));

@@ -1,6 +1,7 @@
 #ifndef SNAKE_H
 #define SNAKE_H
 #include <SFML/Graphics.hpp>
+#include "apple.h"
 
 class Snake
 {
@@ -8,13 +9,12 @@ class Snake
         unsigned int    width;
         unsigned int    height;
         bool            state;
+        float           snake_velocity;
         sf::CircleShape Player;
         sf::Vector2f    direction;
-        float           snake_velocity;
         sf::Vector2f    initial_pos;
 
 public:
-
     Snake(float radius, float set_speed, sf::Vector2f initial_position, float fps) {
             Player.setRadius(radius);
             Player.setPosition({initial_position});
@@ -45,10 +45,11 @@ public:
         // It's using the method Is_SnakeLost
     bool detectColision(unsigned int width, unsigned int height) {
         sf::Vector2f position = Player.getPosition();
-        float diameter = 2.f * Player.getRadius();
+        float diameter        = 2.f * Player.getRadius();
 
         return Is_SnakeLost(position, diameter, width, height);
     }
+
     float getAxis(sf::Keyboard::Scan negativeKey, sf::Keyboard::Scan positiveKey, float vector) {
 
         if (sf::Keyboard::isKeyPressed(negativeKey)) {
