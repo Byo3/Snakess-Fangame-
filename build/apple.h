@@ -23,14 +23,21 @@ struct Apple{
         std::uniform_int_distribution<int> Axis(0, Limit);
         return Axis(gen);
     }
+    void spawn_Apples(int window_width, int window_height) {
+        float Axis_x = generatingPositions(window_width);
+        float Axis_y = generatingPositions(window_height);
 
-    void spawning_Apples(int window_width, int window_height) {
-        if (snake_Score != 0){
-            float Axis_x = generatingPositions(window_width);
-            float Axis_y = generatingPositions(window_height);
+        apple.setPosition({Axis_x, Axis_y});
+    }
 
-            apple.setPosition({Axis_x, Axis_y});
+    bool colisionApple(const sf::CircleShape& player) const {
+        auto boundsPlayer = player.getGlobalBounds();
+        auto boundsApple  = apple.getGlobalBounds();
+
+        if (boundsPlayer.findIntersection(boundsApple)){
+            return true;
         }
+        return false;
     }
 };
 

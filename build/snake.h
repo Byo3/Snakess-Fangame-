@@ -14,7 +14,8 @@ class Snake
         sf::Vector2f    direction;
         sf::Vector2f    initial_pos;
 
-public:
+    public:
+
     Snake(float radius, float set_speed, sf::Vector2f initial_position, float fps) {
             Player.setRadius(radius);
             Player.setPosition({initial_position});
@@ -33,6 +34,7 @@ public:
             return true;
         } else if (playerPosition.x > width - diameter){
             Player.setPosition({initial_pos});
+            return true;
         } else if (playerPosition.y < 0){
             Player.setPosition({initial_pos});
             return true;
@@ -43,11 +45,15 @@ public:
         return false;
     }
         // It's using the method Is_SnakeLost
-    bool detectColision(unsigned int width, unsigned int height) {
+    bool detectColision_Borders(unsigned int width, unsigned int height) {
         sf::Vector2f position = Player.getPosition();
         float diameter        = 2.f * Player.getRadius();
 
         return Is_SnakeLost(position, diameter, width, height);
+    }
+
+    bool checkingAppleColision(const Apple& apple){
+        return apple.colisionApple(Player);
     }
 
     float getAxis(sf::Keyboard::Scan negativeKey, sf::Keyboard::Scan positiveKey, float vector) {
