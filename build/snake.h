@@ -8,11 +8,13 @@ class Snake
     private:
         unsigned int    width;
         unsigned int    height;
-        bool            state;
         float           snake_velocity;
         sf::CircleShape Player;
         sf::Vector2f    direction;
         sf::Vector2f    initial_pos;
+
+        bool Clicked = false;
+
 
     public:
 
@@ -25,7 +27,7 @@ class Snake
     };
 
     void draw(sf::RenderWindow& window) {
-            window.draw(Player);
+        window.draw(Player);
     }
 
     bool Is_SnakeLost(sf::Vector2f playerPosition, float diameter, int width, int height) {
@@ -56,28 +58,39 @@ class Snake
         return apple.colisionApple(Player);
     }
 
-    float getAxis(sf::Keyboard::Scan negativeKey, sf::Keyboard::Scan positiveKey, float vector) {
+    sf::Vector2f getAxis(sf::Vector2f vector) {
 
-        if (sf::Keyboard::isKeyPressed(negativeKey)) {
-            vector -= 1.f;
-        }
-        if (sf::Keyboard::isKeyPressed(positiveKey)) {
-            vector += 1.f;
+        if (!Clicked) {
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::A) && direction.x != 1.f) {
+                Clicked = true;
+                vector  = {-1.f, 0.f};
+            } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::D) && direction.x != -1.f) {
+                Clicked = true;
+                vector  = {1.f, 0.f};
+            } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::S) && direction.y != -1.f){
+                Clicked = true;
+                vector  = {0.f, 1.f};
+            } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::W) && direction.y != 1.f) {
+                Clicked = true;
+                vector  = {0.f, -1.f};
+            }
         }
         return vector;
+
+    }
+    void KeyClicked() {
+        Clicked = false;
     }
 
-    void movingSnake(bool player_state) {
-        direction = {0.f, 0.f};
+    void movingSnake() {
 
-        direction.x = getAxis(sf::Keyboard::Scan::A, sf::Keyboard::Scan::D, direction.x);
-        direction.y = getAxis(sf::Keyboard::Scan::W, sf::Keyboard::Scan::S, direction.y);
+        KeyClicked();
+        direction = getAxis(direction);
         // it normalizes the direction when two buttons are pressed
         if  (direction.x != 0 || direction.y != 0){
-            direction = direction.normalized();
-            Player.setFillColor(sf::Color(100, 226, 180));
+            Player.setFillColor(sf::Color(100, 226, 180)); // Active
         } else {
-            Player.setFillColor(sf::Color(23, 115, 82));
+            Player.setFillColor(sf::Color(23, 115, 82)); // S   tand by
         }
         Player.move({direction * snake_velocity});
     }

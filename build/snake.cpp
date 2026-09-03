@@ -12,9 +12,21 @@ int main()
 
     sf::RenderWindow window(sf::VideoMode({width, height}), "SnakeGame");
 
+
+    sf::Font font;
+    if (!font.openFromFile("./build/Google_Sans/GoogleSans.ttf"))
+    {
+        std::cout << "Error.\n";
+    }
+
+    sf::Text ScoreText(font);
+
+    ScoreText.setString(std::to_string(score));
+
+    ScoreText.setCharacterSize(64);
+
     // Radius, speed, initial position, fps
     Snake snake(25.f, 100.f, {100,400}, 24.f);
-
     // Radius, initial position.
     Apple apple(25.f, {400, 400});
 
@@ -29,15 +41,25 @@ int main()
         }
         window.clear();
 
+
         apple.draw(window);
 
-        if (snake.checkingAppleColision(apple))
+        if (snake.checkingAppleColision(apple)) {
             apple.spawn_Apples(width, height);
-            score++;
-            std::cout << score << "\n";
+            std::cout << apple.incrementScore(score) << "\n";
+            ScoreText.setString(std::to_string(score));
+        }
 
         snake.draw(window);
-        snake.movingSnake(snake.detectColision_Borders(width, height));
+
+        if (!snake.detectColision_Borders(width, height)) {
+            snake.movingSnake();
+        } else {
+            score = 0;
+            ScoreText.setString(std::to_string(score));
+        }
+        // drawing puntuation
+        window.draw(ScoreText);
 
         window.display();
     }
