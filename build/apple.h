@@ -7,15 +7,19 @@ class Apple{
     private:
         sf::CircleShape apple;
         float     diameter;
+        sf::Vector2f initial_pos;
     public:
 
         Apple(float radius, sf::Vector2f initial_position){
             diameter = 2 * radius;
             apple.setRadius(radius);
+            initial_pos = initial_position;
             apple.setPosition({initial_position});
         }
 
-        void draw(sf::RenderWindow& window) {window.draw(apple);}
+        void draw(sf::RenderWindow& window) {
+            window.draw(apple);
+        }
 
         int generatingPositions(int Limit){
             // Obtains a seed from hardware
@@ -44,6 +48,10 @@ class Apple{
 
         int incrementScore(int& initial_score) {
             return initial_score += 1;
+        }
+
+        void SpawnReset() {
+            apple.setPosition(initial_pos);
         }
 };
 
