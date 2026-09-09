@@ -7,6 +7,7 @@
 class Snake {
     private:
         sf::CircleShape SnakePlayer;
+        sf::CircleShape Body_Segmetations;
         sf::Vector2f    Snakedirection;
         sf::Vector2f    initial_pos;
         std::deque<sf::Vector2f> Snake_Bodys;
@@ -17,9 +18,15 @@ class Snake {
         unsigned int height;
         float        snake_velocity;
 
+        int         growthPending = 0;
+
         Snake(float radius, float set_speed, sf::Vector2f initial_position, float fps) {
                 SnakePlayer.setRadius(radius);
                 SnakePlayer.setPosition({initial_position});
+
+                Body_Segmetations.setRadius(radius);
+                Body_Segmetations.setFillColor(sf::Color(45, 173, 81));
+
                 initial_pos = initial_position;
                 float delta_time = 1.f / fps;
                 snake_velocity = set_speed * delta_time;
@@ -27,12 +34,34 @@ class Snake {
         };
         void Reset(){
             Snakedirection = {0.f, 0.f};
+            growthPending = 0;
+            Snake_Bodys.clear();
+        }
+        void Getting_PreviousPositions(const Apple& apple) {
+            Snake_Bodys.push_back(SnakePlayer.getPosition());
+
+            if (growthPending > 0) {
+                growthPending--;
+
+            } else{
+                Snake_Bodys.pop_front();
+            }
         }
         void drawSnake(sf::RenderWindow& window) {
             window.draw(SnakePlayer);
         }
 
+        void drawBody(sf::RenderWindow& window) {
+            for (const auto& Previous_Position : Snake_Bodys) {
+                Body_Segmetations.setPosition(Previous_Position);
+                window.draw(Body_Segmetations);
+            }
+        }
+
         bool Is_SnakeLost(sf::Vector2f playerPosition, float diameter, int width, int height) {
+            auto boundsHead = SnakePlayer.getGlobalBounds();
+            auto boundsBody  = Body_Segmetations.getLocalBounds();
+
             if (playerPosition.x < 0) {
                 SnakePlayer.setPosition({initial_pos});
                 return 1;
@@ -43,6 +72,9 @@ class Snake {
                 SnakePlayer.setPosition({initial_pos});
                 return 1;
             } else if (playerPosition.y > height - diameter){
+                SnakePlayer.setPosition({initial_pos});
+                return 1;
+            } else if (boundsHead.findIntersection(boundsBody)) {
                 SnakePlayer.setPosition({initial_pos});
                 return 1;
             }
@@ -86,11 +118,12 @@ class Snake {
         void movingSnake() {
             ResetClicked();
             Snakedirection = getAxis(Snakedirection);
+
             // it normalizes the direction when two buttons are pressed
             if  (Snakedirection.x != 0 || Snakedirection.y != 0){
                 SnakePlayer.setFillColor(sf::Color(100, 226, 180)); // Active
             } else {
-                SnakePlayer.setFillColor(sf::Color(23, 115, 82)); // S   tand by
+                SnakePlayer.setFillColor(sf::Color(23, 115, 82)); // Stand by
             }
             SnakePlayer.move({Snakedirection * snake_velocity});
         }

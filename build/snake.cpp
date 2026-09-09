@@ -9,6 +9,8 @@ int main()
 
     sf::Vector2f initial_PositionlApple = {400, 400};
 
+    sf::Vector2f initial_PositionSnake  = {100,400};
+
     sf::RenderWindow window(sf::VideoMode({width, height}), "SnakeGame");
 
     sf::Font font;
@@ -29,10 +31,10 @@ int main()
     sf::Text Messages(font);
     Messages.setCharacterSize(64);
     Messages.setPosition({150, 300});
-    Messages.setString("You lost. ");
+    Messages.setString("You lost.");
 
     // Radius, speed, initial position, fps
-    Snake snake(15.f, 80.f, {100,400}, 24.f);
+    Snake snake(15.f, 80.f, initial_PositionSnake, 24.f);
     // Radius, initial position.
     Apple apple(15.f, initial_PositionlApple);
 
@@ -50,24 +52,19 @@ int main()
 
         sf::Time elapsedTime = clock.getElapsedTime();
 
-        window.clear();
-
-        apple.draw(window);
-
-        snake.drawSnake(window);
-
-        // drawing puntuation
-        window.draw(ScoreText);
-
-    // Note: Inserts these conditionals below into separated functions.
-        if (snake.checkingAppleColision(apple)) {
-            apple.spawn_Apples(width, height);
-            std::cout << apple.incrementScore(score) << "\n";
-            ScoreText.setString(std::to_string(score));
-        }
-
         if (!snake.detectColision_Borders(width, height)) {
             snake.movingSnake();
+
+            snake.Getting_PreviousPositions(apple);
+
+            // Note: Inserts these conditionals below into separated functions.
+            if (snake.checkingAppleColision(apple)) {
+                snake.growthPending += 8;
+                apple.spawn_Apples(width, height);
+                std::cout << apple.incrementScore(score) << "\n";
+                ScoreText.setString(std::to_string(score));
+            }
+
 
         } else {
             ShowMessage = true;
@@ -82,6 +79,16 @@ int main()
             apple.SpawnReset();
             snake.Reset();
         }
+        window.clear();
+
+        apple.draw(window);
+
+        snake.drawBody(window);
+        snake.drawSnake(window);
+
+        // drawing puntuation
+        window.draw(ScoreText);
+
         if (ShowMessage) {
             if (elapsedTime < Duration) {
                 window.draw(Messages);
@@ -89,6 +96,8 @@ int main()
                 ShowMessage = false;
             }
         }
+
+
         window.display();
     }
 }

@@ -13,6 +13,7 @@ class Apple{
         Apple(float radius, sf::Vector2f initial_position){
             diameter = 2 * radius;
             apple.setRadius(radius);
+            apple.setFillColor(sf::Color(217, 35, 68));
             initial_pos = initial_position;
             apple.setPosition({initial_position});
         }
